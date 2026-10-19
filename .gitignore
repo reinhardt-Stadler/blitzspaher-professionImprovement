@@ -1,0 +1,43 @@
+# =========================================================
+# blitzspaher .gitignore
+# 原则：只提交 docs/（文档）与 src/（代码）；
+#       敏感信息（密钥、.env、审计日志）一律不进库。
+# =========================================================
+
+# ---- 白名单：仓库根只放行 docs/、src/ 与本文件 ----
+/*
+!/.gitignore
+!/docs/
+!/src/
+
+# ---- 敏感信息（即使在 src/ 内也排除）----
+# 环境变量与密钥
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+id_rsa*
+secrets.*
+*credential*
+
+# 审计日志（运行时产物，含目标地址/工具输出，属敏感数据）
+src/pi-pentest/audit/*.jsonl
+!src/pi-pentest/audit/.gitkeep
+
+# ---- 构建与依赖产物 ----
+node_modules/
+dist/
+coverage/
+*.tsbuildinfo
+__pycache__/
+*.pyc
+.venv/
+
+# ---- 日志与临时文件 ----
+*.log
+*.tmp
+.DS_Store
+Thumbs.db
+desktop.ini
