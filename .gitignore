@@ -4,11 +4,19 @@
 #       敏感信息（密钥、.env、审计日志）一律不进库。
 # =========================================================
 
-# ---- 白名单：仓库根只放行 docs/、src/ 与本文件 ----
+# ---- 白名单：仓库根只放行 docs/、src/、deploy/ 与本文件 ----
 /*
 !/.gitignore
 !/docs/
 !/src/
+!/deploy/
+
+# deploy/ 内的运行时产物与生成副本不提交（源在 src/ 与 knowledge/generated/）
+deploy/knowledge/generated/
+deploy/pi-pentest/
+deploy/knowledge-ctx/
+deploy/runs/
+deploy/.env
 
 # ---- 敏感信息（即使在 src/ 内也排除）----
 # 环境变量与密钥
