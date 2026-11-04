@@ -25,6 +25,9 @@ secrets.*
 # 审计日志（运行时产物，含目标地址/工具输出，属敏感数据）
 src/pi-pentest/audit/*.jsonl
 !src/pi-pentest/audit/.gitkeep
+# 观测证据（Observation / 原始产物，同上属敏感运行数据）
+src/pi-pentest/audit/observations/
+src/pi-pentest/audit/artifacts/
 
 # ---- 构建与依赖产物 ----
 node_modules/
