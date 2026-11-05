@@ -1,5 +1,10 @@
 # W2 单点验证：Fastjson 全流程跑通
 
+> 归属周志：`docs/weeklyLog/2026-W45-W2单点验证-Fastjson.md`
+> 本文件为完整验证记录（实测证据 + 复现步骤），周志只保留摘要。
+
+---
+
 > **对应**：W2（MVP-1 端到端）、ADR-003（工具集）、验收 R2/R4/R5/R7
 > **日期**：2026-11-04
 > **范围**：单点验证（1 个 CVE、1 个靶场），非全面 W2
@@ -13,7 +18,7 @@
 
 | 环节 | 结果 | 证据 |
 |------|------|------|
-| L5/L6 沙箱 | ✅ 沿用 W1 结论 | `docs/weekly/2026-W44-W1沙箱验证.md` |
+| L5/L6 沙箱 | ✅ 沿用 W1 结论 | `docs/weeklyLog/2026-W44-W1沙箱验证.md` |
 | pi 在容器内经代理访问模型 | ✅ `CONNECT api.deepseek.com` → `Established` | `runs/proxy-logs/tinyproxy.log` |
 | `nmap_scan` 真实执行 | ✅ 发现 1 个开放端口（8090） | `runs/agent-audit/` |
 | `http_probe` 真实执行 | ✅ HTTP 200 | 同上 |
