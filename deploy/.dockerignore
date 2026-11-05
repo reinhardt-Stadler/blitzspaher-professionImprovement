@@ -1,0 +1,7 @@
+# ─────────────────────────────────────────────────────────────
+# 构建时暂存目录（由 prepare-build.mjs 生成，不进 git）
+# 目的：让 classic builder（无需 buildx）也能取到 src/ 与 knowledge/
+#
+# 用法：node deploy/prepare-build.mjs && cd deploy && docker compose build
+# ─────────────────────────────────────────────────────────────
+build-context/

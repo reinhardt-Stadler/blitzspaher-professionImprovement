@@ -1,0 +1,139 @@
+# ─────────────────────────────────────────────────────────────
+# blitzspaher 渗透实验环境（W1-S3）
+#
+# 网络拓扑（对应 docs/7沙箱网络架构入门.md §6.2 方案 2）：
+#
+#   ┌─ pentest-net (internal) ────────────────────────┐
+#   │  agent ──► target(靶场)                          │
+#   │    │                                             │
+#   │    └──► proxy（唯一出口）                        │
+#   └──────────────────┬───────────────────────────────┘
+#                      │
+#               ┌──────▼──────┐
+#               │  outbound   │──► 仅 api.deepseek.com
+#               │  (bridge)   │    （白名单，其余全拒）
+#               └─────────────┘
+#
+# 关键安全属性：
+#   - target 只在 pentest-net，无任何出网能力
+#   - agent 只在 pentest-net，出网只能经 proxy
+#   - proxy 双网卡，按域名白名单放行
+#
+# 用法：
+#   cp .env.example .env && 填 DEEPSEEK_API_KEY
+#   docker compose up -d
+#   docker compose exec agent bash          # 进入 agent
+#   docker compose logs -f proxy            # 看代理的 ALLOW/DENY 日志
+#
+#   # R7 对抗用例（物理层证据）：
+#   docker compose exec agent curl -m 5 https://www.baidu.com ; echo "退出码=$?"
+#   # → 应失败（代理拒绝 + 无其他出口）
+# ─────────────────────────────────────────────────────────────
+
+name: blitzspaher
+
+services:
+  # ── 靶场（Vulhub Fastjson 反序列化 RCE）──────────────────
+  # 注意：目录名是 1.2.47-rce，但官方镜像 tag 为 1.2.45（Vulhub 上游如此）
+  #       漏洞编号：CVE-2017-18349（fastjson ≤1.2.47 反序列化）
+  #       若镜像拉不到，改用下面的 build 方式（指向本地 vulhub 目录）
+  target:
+    image: vulhub/fastjson:1.2.45
+    container_name: bz-target-fastjson
+    hostname: target
+    restart: unless-stopped
+    networks:
+      - pentest-net
+    # 不暴露任何端口到宿主机（靶场只对 agent 可见）
+    expose:
+      - "8090"
+    # 靶场自身无出网需求
+    labels:
+      blitzspaher.role: target
+      blitzspaher.cve: CVE-2017-18349
+
+  # ── 出网代理（L6 的执行者）────────────────────────────────
+  # tinyproxy：极小（~10MB），支持按域名白名单的 Filter 规则
+  proxy:
+    image: vimagick/tinyproxy:latest
+    container_name: bz-proxy
+    hostname: proxy
+    restart: unless-stopped
+    networks:
+      - pentest-net        # 供 agent 访问
+      - outbound           # 唯一能出网的服务
+    volumes:
+      - ./proxy/tinyproxy.conf:/etc/tinyproxy/tinyproxy.conf:ro
+      - ./proxy/filter:/etc/tinyproxy/filter:ro
+      - ./runs/proxy-logs:/var/log/tinyproxy
+    labels:
+      blitzspaher.role: egress-proxy
+
+  # ── agent（pi + 渗透工具）─────────────────────────────────
+  agent:
+    build:
+      # 构建上下文为 deploy/（classic builder 无需 buildx）
+      context: .
+      dockerfile: Dockerfile
+      args:
+        # 构建时把知识库拷入构建上下文（deploy/knowledge/generated/）
+        KNOWLEDGE_READY: "1"
+    image: blitzspaher-agent:0.1
+    container_name: bz-agent
+    hostname: agent
+    restart: unless-stopped
+    depends_on:
+      - target
+      - proxy
+    networks:
+      - pentest-net        # 只有内网！没有 outbound
+    environment:
+      # 授权范围（SEC-AUTHZ-01）
+      PENTEST_ALLOWED_TARGETS: target,127.0.0.1,localhost
+      PENTEST_MAX_CALLS: "12"
+      PENTEST_MAX_RUNTIME_MS: "600000"
+      PENTEST_ARM: "on"
+      PENTEST_RUN_ID: ""
+      # 出网只能经代理（L6）
+      HTTP_PROXY: http://proxy:8888
+      HTTPS_PROXY: http://proxy:8888
+      NO_PROXY: localhost,127.0.0.1,target,proxy
+      KNOWLEDGE_DIR: /knowledge
+      # 模型凭据（从 .env 注入，不落镜像）
+      DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY:?请在 .env 中设置 DEEPSEEK_API_KEY}
+    # ── L5 容器层硬约束 ──
+    read_only: true
+    tmpfs:
+      - /tmp:size=256m,mode=1777
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 256
+    mem_limit: 2g
+    cpus: "2.0"
+    # 可写点：只挂这两个
+    volumes:
+      - ./runs/agent-work:/work
+      - ./runs/agent-audit:/app/pi-pentest/audit    # 不暴露端口到宿主机
+    labels:
+      blitzspaher.role: agent
+    # 默认保持存活，便于 docker compose exec 进入
+    entrypoint: ["/bin/bash"]
+    command: ["-lc", "sleep infinity"]
+
+networks:
+  # 内网：agent 与 target 与 proxy 互通，无出口
+  pentest-net:
+    driver: bridge
+    internal: true
+    ipam:
+      config:
+        - subnet: 172.28.0.0/24
+
+  # 外网：只有 proxy 接入，可出网
+  outbound:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.29.0.0/24
