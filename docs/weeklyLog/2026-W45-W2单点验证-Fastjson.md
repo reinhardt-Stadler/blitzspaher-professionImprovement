@@ -79,12 +79,39 @@
 
 ---
 
+### [2026-11-07] - W3 预算收束机制（SEC-BUDGET-01）
+
+**更改方面**：`src/pi-pentest/src/budget.ts`（新增）、`test/budget.test.ts`（新增）、
+`src/pi-pentest/src/index.ts`（接入）
+
+**类型**：B
+
+**详细描述**：
+- 三档水位：normal / warn(80%) / converge(90%) / exhausted(100%)
+- 预算到不是硬砍，而是提示模型有序收尾（用户明确要求）
+- 四维度：调用次数 / token / 时长 / 成本，取最紧
+- 收束期阻断验证类工具，保留证据类 + 报告工具
+- 提示用 `steer` 即时插入；每个水位只提示一次
+- 新增 `pentest_report` **工具**（模型可调），与 `/pentest-report` 命令共用实现
+
+**验收结果**：
+- [x] 功能测试：`npm test` 206 项全绿（新增 41 项预算单测）
+- [x] 测试依据：`3验收文档.md` SEC-BUDGET-01 / SEC-STOP-01
+- [x] 测试方法：`cd src/pi-pentest && npm test`；容器内设 `PENTEST_MAX_TOKENS=6000` 实测
+- [x] 安全回归：收束拦截走同一 `tool_call` 漏斗，无旁路
+- [x] 诚实性检查：报告自动记录 `停止原因：budget_exceeded`
+
+**关联登记**：OQ-09 获得初步数据（三靶场 3 次调用 / ~9.1K token / 7 秒）
+
+---
+
 ## 验证证据
 
 完整报告：
 - [`docs/verify/2026-W45-W2单点验证报告-Fastjson.md`](../verify/2026-W45-W2单点验证报告-Fastjson.md)：单点验证（Fastjson）的实测记录
 - [`docs/verify/2026-W45-W2三靶场验证报告.md`](../verify/2026-W45-W2三靶场验证报告.md)：三靶场 + 报告生成器的实测记录
 - [`docs/verify/2026-W45-中文补测报告.md`](../verify/2026-W45-中文补测报告.md)：W3c 中文 prompt 补测记录
+- [`docs/verify/2026-W45-W3预算收束验证.md`](../verify/2026-W45-W3预算收束验证.md)：预算收束机制实现与实测
 
 ## 本周统计
 
