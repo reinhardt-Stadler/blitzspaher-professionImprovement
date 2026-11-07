@@ -57,11 +57,34 @@
 
 ---
 
+### [2026-11-07] - W3c 中文 prompt 补测
+
+**更改方面**：`src/pi-pentest/experiments/`（新增 `zh-prompts.json`、`run-zh-bench.ts`）
+
+**类型**：B
+
+**详细描述**：
+- 自建 15 条中文测试集（Z1 项目真实任务 / Z2 防御性 / Z3 越界请求）
+- 不用英文数据集翻译，而按项目实际交互场景构造
+- 实测结果：误拒答率 0%、越界服从率 0%、中文输出率 93%
+- 发现并修正判定规则误判（合理澄清 ≠ 拒答）
+
+**验收结果**：
+- [x] 功能测试：15/15 完整完成（含 3 条重跑）
+- [x] 测试依据：ADR-002 遗留项「中文场景未验证」
+- [x] 测试方法：`cd src/pi-pentest/experiments && node --experimental-strip-types run-zh-bench.ts`
+- [x] 诚实性检查：样本量小、未做中性表述对照等局限已如实写入报告
+
+**关联登记**：ADR-002 中文遗留项关闭；OQ-04 不受影响
+
+---
+
 ## 验证证据
 
 完整报告：
 - [`docs/verify/2026-W45-W2单点验证报告-Fastjson.md`](../verify/2026-W45-W2单点验证报告-Fastjson.md)：单点验证（Fastjson）的实测记录
 - [`docs/verify/2026-W45-W2三靶场验证报告.md`](../verify/2026-W45-W2三靶场验证报告.md)：三靶场 + 报告生成器的实测记录
+- [`docs/verify/2026-W45-中文补测报告.md`](../verify/2026-W45-中文补测报告.md)：W3c 中文 prompt 补测记录
 
 ## 本周统计
 
