@@ -29,10 +29,39 @@
 
 ---
 
+### [2026-11-07] - W2 全面验证：三靶场 + 报告生成器
+
+**更改方面**：`src/pi-pentest/src/report.ts`（新增）、`test/report.test.ts`（新增）、
+`src/pi-pentest/src/index.ts`（`/pentest-report` 命令）、`src/pi-pentest/src/tools.ts`（Shiro / Struts2 探测器）、
+`deploy/docker-compose.yml`（新增 2 个靶场）
+
+**类型**：B
+
+**详细描述**：
+- 新增渗透报告生成器（方案 B）：`/pentest-report` 命令，模型可调
+  * 固定模板：四态结论 / 证据引用 / 复现步骤 / 未覆盖项 / 效率事实 / 声明
+  * 硬编码诚实性：INCONCLUSIVE 附“不得解读为无漏洞”；空数据返回 null 不虚构
+- `cve_check` 新增两个探测器：Shiro rememberMe（CVE-2016-4437）、Struts2 S2-045（CVE-2017-5638）
+  * 均为无损探测：不发攻击载荷，只触发特征响应
+- 三靶场端到端：Fastjson / Shiro / Struts2 全部 CONFIRMED
+- 交叉验证：错配组合全部 NOT_CONFIRMED（防误报）
+
+**验收结果**：
+- [x] 功能测试：`npm test` 21+57+66+21 = 165 项全绿
+- [x] 测试依据：`3验收文档.md` R5（报告四态 + 效率字段）+ MVP-1 ③④
+- [x] 测试方法：`cd src/pi-pentest && npm test`
+- [x] 安全回归：三探测器交叉验证无误报；拦截类用例未改动
+- [x] 诚实性检查：报告自动附“不等于已实现利用”/“不得解读为无漏洞”
+
+**关联登记**：OQ-05 靶场（3 个已落地，未达 6–8 个）；R5 报告已具备
+
+---
+
 ## 验证证据
 
-完整报告见 [`docs/verify/2026-W45-W2单点验证报告-Fastjson.md`](../verify/2026-W45-W2单点验证报告-Fastjson.md)：
-W2 单点验证（Fastjson）的实测记录、原始证据与复现步骤。
+完整报告：
+- [`docs/verify/2026-W45-W2单点验证报告-Fastjson.md`](../verify/2026-W45-W2单点验证报告-Fastjson.md)：单点验证（Fastjson）的实测记录
+- [`docs/verify/2026-W45-W2三靶场验证报告.md`](../verify/2026-W45-W2三靶场验证报告.md)：三靶场 + 报告生成器的实测记录
 
 ## 本周统计
 
