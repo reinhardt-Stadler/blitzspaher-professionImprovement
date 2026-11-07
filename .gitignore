@@ -32,6 +32,8 @@ secrets.*
 
 # 审计日志（运行时产物，含目标地址/工具输出，属敏感数据）
 src/pi-pentest/audit/*.jsonl
+# 实验原始结果（运行时产物，含模型输出；脚本与数据集保留可复现）
+src/pi-pentest/experiments/results/
 !src/pi-pentest/audit/.gitkeep
 # 观测证据（Observation / 原始产物，同上属敏感运行数据）
 src/pi-pentest/audit/observations/
