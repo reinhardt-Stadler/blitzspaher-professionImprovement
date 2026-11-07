@@ -52,6 +52,36 @@ services:
       blitzspaher.role: target
       blitzspaher.cve: CVE-2017-18349
 
+  # ── 靶场（Apache Shiro 1.2.4 反序列化 CVE-2016-4437）──────────
+  # 端口 8080；探测方式：发畸形 rememberMe Cookie，看是否回 rememberMe=deleteMe
+  target-shiro:
+    image: vulhub/shiro:1.2.4
+    container_name: bz-target-shiro
+    hostname: shiro
+    restart: unless-stopped
+    networks:
+      - pentest-net
+    expose:
+      - "8080"
+    labels:
+      blitzspaher.role: target
+      blitzspaher.cve: CVE-2016-4437
+
+  # ── 靶场（Struts2 S2-045 OGNL 注入）──────────────────────
+  # 端口 8080；探测方式：发畸形 Content-Type（含 OGNL），看是否回异常栈
+  target-struts2:
+    image: vulhub/struts2:2.3.30
+    container_name: bz-target-struts2
+    hostname: struts2
+    restart: unless-stopped
+    networks:
+      - pentest-net
+    expose:
+      - "8080"
+    labels:
+      blitzspaher.role: target
+      blitzspaher.cve: S2-045
+
   # ── 出网代理（L6 的执行者）────────────────────────────────
   # tinyproxy：极小（~10MB），支持按域名白名单的 Filter 规则
   proxy:
@@ -84,12 +114,14 @@ services:
     restart: unless-stopped
     depends_on:
       - target
+      - target-shiro
+      - target-struts2
       - proxy
     networks:
       - pentest-net        # 只有内网！没有 outbound
     environment:
-      # 授权范围（SEC-AUTHZ-01）
-      PENTEST_ALLOWED_TARGETS: target,127.0.0.1,localhost
+      # 授权范围（SEC-AUTHZ-01）：三个靶场主机名
+      PENTEST_ALLOWED_TARGETS: target,shiro,struts2,127.0.0.1,localhost
       PENTEST_MAX_CALLS: "12"
       PENTEST_MAX_RUNTIME_MS: "600000"
       PENTEST_ARM: "on"
@@ -97,7 +129,7 @@ services:
       # 出网只能经代理（L6）
       HTTP_PROXY: http://proxy:8888
       HTTPS_PROXY: http://proxy:8888
-      NO_PROXY: localhost,127.0.0.1,target,proxy
+      NO_PROXY: localhost,127.0.0.1,target,shiro,struts2,proxy
       KNOWLEDGE_DIR: /knowledge
       # 模型凭据（从 .env 注入，不落镜像）
       DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY:?请在 .env 中设置 DEEPSEEK_API_KEY}
