@@ -105,6 +105,31 @@
 
 ---
 
+### [2026-11-08] - W3 证据收集器（evidence_collector）
+
+**更改方面**：`src/pi-pentest/src/evidence-collector.ts`（新增）、`test/evidence-collector.test.ts`（新增）、
+`src/pi-pentest/src/index.ts`（接入工具+命令）
+
+**类型**：B
+
+**详细描述**：
+- 证据包：tar.gz，含 MANIFEST.json / README / audit / report / observations / artifacts
+- 每个文件记录 SHA-256，可离线校验；缺失项写入 `gaps`，不补造
+- 按 runId 过滤审计事件，避免泄露其他运行
+- 双入口：`evidence_collector` 工具（模型可调）+ `/pentest-evidence` 命令（用户可调）
+- 与 ObservationStore 分工：后者运行期自动落盘，前者任务结束主动打包
+
+**验收结果**：
+- [x] 功能测试：`npm test` 240 项全绿（新增 34 项证据收集器单测）
+- [x] 测试依据：`3验收文档.md` R5 ②（证据与复现步骤）+ 评价量表「证据链完整性」
+- [x] 测试方法：`cd src/pi-pentest && npm test`；容器内跑完整流程并解包校验
+- [x] 安全回归：不涉及授权/预算逻辑；证据包内容隔离按 runId
+- [x] 诚实性检查：实测 6/6 文件哈希一致，gaps 为空；报告中途生成时的 TRACE_DEGRADED 已如实记录
+
+**关联登记**：ADR-003 第 4 类工具（evidence_collector）已实现
+
+---
+
 ## 验证证据
 
 完整报告：
@@ -112,6 +137,7 @@
 - [`docs/verify/2026-W45-W2三靶场验证报告.md`](../verify/2026-W45-W2三靶场验证报告.md)：三靶场 + 报告生成器的实测记录
 - [`docs/verify/2026-W45-中文补测报告.md`](../verify/2026-W45-中文补测报告.md)：W3c 中文 prompt 补测记录
 - [`docs/verify/2026-W45-W3预算收束验证.md`](../verify/2026-W45-W3预算收束验证.md)：预算收束机制实现与实测
+- [`docs/verify/2026-W45-W3证据收集器验证.md`](../verify/2026-W45-W3证据收集器验证.md)：证据收集器实现与校验
 
 ## 本周统计
 
