@@ -7,7 +7,6 @@
 # ---- 白名单：仓库根只放行 docs/、src/、deploy/、AGENTS.md 与本文件 ----
 /*
 !/.gitignore
-!/AGENTS.md
 !/docs/
 !/src/
 !/deploy/
