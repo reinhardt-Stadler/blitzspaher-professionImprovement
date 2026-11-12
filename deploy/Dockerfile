@@ -46,7 +46,7 @@ RUN ARCH="$(dpkg --print-architecture)" \
  && node --version && npm --version
 
 # ── pi-coding-agent ─────────────────────────────────────────
-RUN npm install -g @earendil-works/pi-coding-agent@1.2.0 \
+RUN npm install -g @earendil-works/pi-coding-agent@1.5.2 \
  && pi --version || true
 
 # ── 非 root 用户（L5）────────────────────────────────────────
