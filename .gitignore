@@ -31,6 +31,8 @@ secrets.*
 *credential*
 
 # 审计日志（运行时产物，含目标地址/工具输出，属敏感数据）
+# 运行产物（报告 / 证据包）：不随代码走，避免把一次任务的证据当成仓库内容
+src/pi-pentest/out/
 src/pi-pentest/audit/*.jsonl
 # 实验原始结果（运行时产物，含模型输出；脚本与数据集保留可复现）
 src/pi-pentest/experiments/results/
