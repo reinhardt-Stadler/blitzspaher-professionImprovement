@@ -7,6 +7,9 @@
 # ---- 白名单：仓库根只放行 docs/、src/、deploy/、AGENTS.md 与本文件 ----
 /*
 !/.gitignore
+# .gitattributes 必须入库才生效：它规定 *.sh 用 LF checkout，
+# 否则 deploy/ 下的脚本在 WSL 里会因 CRLF 报 bad interpreter
+!/.gitattributes
 !/docs/
 !/src/
 !/deploy/

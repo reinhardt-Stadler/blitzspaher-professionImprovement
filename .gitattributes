@@ -1,0 +1,9 @@
+# Shell scripts are executed inside WSL/Linux, not on Windows.
+# A CRLF checkout breaks the shebang ("bad interpreter: /usr/bin/env bash^M")
+# and appends \r to every line. Force LF regardless of core.autocrlf.
+*.sh text eol=lf
+
+# Lab list is parsed by awk with -F'|'. A CRLF checkout appends \r to the last
+# field, so `lab.sh list` would print "yes\r" and the PRESENT column would look
+# broken. Keep it LF.
+deploy/labs/*.txt text eol=lf

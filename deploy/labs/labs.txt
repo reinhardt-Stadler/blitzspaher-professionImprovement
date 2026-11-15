@@ -1,0 +1,29 @@
+# Lab targets for RA-5.1 (6-8 resettable Vulhub targets)
+#
+# Format: name | vulhub-relative-path | expected-host-port | cve | verifier
+#
+# Two columns are advisory, not authority:
+#   - expected-host-port: Vulhub compose files pin their own mapping. The script
+#     reads the ACTUAL mapping from `docker ps` after start, so a wrong number
+#     here only affects the "expected" column in `list`, never the probe.
+#   - verifier: whether cve_check already has a probe spec for it.
+#     "no" means it is a legitimate target for probe_forge (write one yourself),
+#     not that the target is unusable.
+#
+# Ports collide across Vulhub targets (most Java demos bind 8080). That is why
+# this tool starts ONE target at a time instead of all eight: `lab.sh <name> start`.
+#
+# Run `bash deploy/labs/lab.sh list` to see which of these actually exist in
+# your vulhub checkout - the list is filtered against the filesystem, so it
+# stays honest if your vulhub version differs.
+
+fastjson-1.2.47  | fastjson/1.2.47-rce   | 8090 | CVE-2017-18349  | yes
+fastjson-1.2.45  | fastjson/1.2.45-rce   | 8090 | CVE-2017-18349  | yes
+shiro-1.2.4      | shiro/CVE-2016-4437   | 8080 | CVE-2016-4437   | yes
+struts2-s2-045   | struts2/S2-045        | 8080 | CVE-2017-5638   | yes
+struts2-s2-061   | struts2/S2-061        | 8080 | CVE-2020-17530  | no
+spring-4shell    | spring/CVE-2022-22965 | 8080 | CVE-2022-22965  | no
+tomcat-put       | tomcat/CVE-2017-12615 | 8080 | CVE-2017-12615  | no
+solr-velocity    | solr/CVE-2019-17558   | 8983 | CVE-2019-17558  | no
+ofbiz-upload     | ofbiz/CVE-2020-1955   | 8443 | CVE-2020-1955   | no
+unomi-rce        | unomi/CVE-2020-13942  | 8181 | CVE-2020-13942  | no
