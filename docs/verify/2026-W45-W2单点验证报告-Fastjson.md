@@ -1,6 +1,6 @@
 # W2 单点验证：Fastjson 全流程跑通
 
-> 归属周志：`docs/weeklyLog/2026-W45-W2单点验证-Fastjson.md`
+> 归属周志：[`docs/weeklyLog/2026-W45-W2单点验证-Fastjson.md`](../weeklyLog/2026-W45-W2单点验证-Fastjson.md)
 > 本文件为完整验证记录（实测证据 + 复现步骤），周志只保留摘要。
 
 ---
@@ -18,7 +18,7 @@
 
 | 环节 | 结果 | 证据 |
 |------|------|------|
-| L5/L6 沙箱 | ✅ 沿用 W1 结论 | `docs/weeklyLog/2026-W44-W1沙箱验证.md` |
+| L5/L6 沙箱 | ✅ 沿用 W1 结论 | [`docs/weeklyLog/2026-W44-W1沙箱验证.md`](../weeklyLog/2026-W44-W1沙箱验证.md) |
 | pi 在容器内经代理访问模型 | ✅ `CONNECT api.deepseek.com` → `Established` | `runs/proxy-logs/tinyproxy.log` |
 | `nmap_scan` 真实执行 | ✅ 发现 1 个开放端口（8090） | `runs/agent-audit/` |
 | `http_probe` 真实执行 | ✅ HTTP 200 | 同上 |
@@ -155,7 +155,7 @@ execution nmap_scan   -       nmap 发现 1 个开放端口
 **根因**：`extractTarget()` 只对 `url` 字段做主机提取，
 对 `target`/`host`/`hostname` 原样返回，未剥离 `:port`。
 
-**修复**（`src/pi-pentest/src/security-control.ts`）：
+**修复**（[`src/pi-pentest/src/security-control.ts`](../../src/pi-pentest/src/security-control.ts)）：
 
 ```ts
 export function extractTarget(args) {
@@ -177,12 +177,12 @@ export function extractTarget(args) {
 **根因**：Node 原生 `fetch` 不读 `HTTP_PROXY` 环境变量。
 pi 内部用 undici，但在 `--print` 路径下未初始化代理 dispatcher。
 
-**修复**：`deploy/proxy-setup.cjs` + `NODE_OPTIONS="--require /app/proxy-setup.cjs"`，
+**修复**：[`deploy/proxy-setup.cjs`](../../deploy/proxy-setup.cjs) + `NODE_OPTIONS="--require /app/proxy-setup.cjs"`，
 预加载 `undici.EnvHttpProxyAgent`。
 
 **验证**：代理日志出现 `CONNECT api.deepseek.com:443` → `Established connection`。
 
-> 这正是 `docs/7沙箱网络架构入门.md` §7.3 标记的待验证项，现已闭环。
+> 这正是 [`docs/7沙箱网络架构入门.md`](../7沙箱网络架构入门.md) §7.3 标记的待验证项，现已闭环。
 
 ### 缺陷 D3：`deploy/.env` 从未填入真实密钥
 

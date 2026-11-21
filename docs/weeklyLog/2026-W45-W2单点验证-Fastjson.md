@@ -1,8 +1,8 @@
 # 周志 2026-W45（2026-11-02 ~ 11-08）：W2 单点验证（Fastjson）
 
-> 撰写规范见 `docs/5工程变更章程.md`。条目类型：A（文档）/ B（代码）/ A+B（混合）。
+> 撰写规范见 [`docs/5工程变更章程.md`](../5工程变更章程.md)。条目类型：A（文档）/ B（代码）/ A+B（混合）。
 > 判定词汇：PASS / FAIL / INSUFFICIENT_EVIDENCE / NOT_APPLICABLE。
-> 定位边界：只记录本周**已完成**的变更；未来工作见 `docs/4工作项与路线图.md`（计划唯一入口）。
+> 定位边界：只记录本周**已完成**的变更；未来工作见 [`docs/4工作项与路线图.md`](../4工作项与路线图.md)（计划唯一入口）。
 
 ---
 
@@ -10,7 +10,7 @@
 
 ### [2026-11-04] - cve_check 真实实现 + Fastjson 全流程跑通
 
-**更改方面**：`src/pi-pentest/src/tools.ts`、`security-control.ts`、`deploy/proxy-setup.cjs`
+**更改方面**：[`src/pi-pentest/src/tools.ts`](../../src/pi-pentest/src/tools.ts)、`security-control.ts`、[`deploy/proxy-setup.cjs`](../../deploy/proxy-setup.cjs)
 
 **类型**：B
 
@@ -21,7 +21,7 @@
 
 **验收结果**：
 - [x] 功能测试：`npm test` 21+57+66 = 144 项全绿
-- [x] 测试依据：`3验收文档.md` R2/R5/R7 + `security-control.test.ts` 新增 5 条回归
+- [x] 测试依据：[`3验收文档.md`](../3验收文档.md) R2/R5/R7 + `security-control.test.ts` 新增 5 条回归
 - [x] 测试方法：`cd src/pi-pentest && npm test`
 - [x] 安全回归：`TARGET_NOT_AUTHORIZED` / 高危 ask / 重复执行三类拦截均复测通过
 
@@ -31,9 +31,9 @@
 
 ### [2026-11-07] - W2 全面验证：三靶场 + 报告生成器
 
-**更改方面**：`src/pi-pentest/src/report.ts`（新增）、`test/report.test.ts`（新增）、
-`src/pi-pentest/src/index.ts`（`/pentest-report` 命令）、`src/pi-pentest/src/tools.ts`（Shiro / Struts2 探测器）、
-`deploy/docker-compose.yml`（新增 2 个靶场）
+**更改方面**：[`src/pi-pentest/src/report.ts`](../../src/pi-pentest/src/report.ts)（新增）、`test/report.test.ts`（新增）、
+[`src/pi-pentest/src/index.ts`](../../src/pi-pentest/src/index.ts)（`/pentest-report` 命令）、[`src/pi-pentest/src/tools.ts`](../../src/pi-pentest/src/tools.ts)（Shiro / Struts2 探测器）、
+[`deploy/docker-compose.yml`](../../deploy/docker-compose.yml)（新增 2 个靶场）
 
 **类型**：B
 
@@ -48,7 +48,7 @@
 
 **验收结果**：
 - [x] 功能测试：`npm test` 21+57+66+21 = 165 项全绿
-- [x] 测试依据：`3验收文档.md` R5（报告四态 + 效率字段）+ MVP-1 ③④
+- [x] 测试依据：[`3验收文档.md`](../3验收文档.md) R5（报告四态 + 效率字段）+ MVP-1 ③④
 - [x] 测试方法：`cd src/pi-pentest && npm test`
 - [x] 安全回归：三探测器交叉验证无误报；拦截类用例未改动
 - [x] 诚实性检查：报告自动附“不等于已实现利用”/“不得解读为无漏洞”
@@ -59,7 +59,7 @@
 
 ### [2026-11-07] - W3c 中文 prompt 补测
 
-**更改方面**：`src/pi-pentest/experiments/`（新增 `zh-prompts.json`、`run-zh-bench.ts`）
+**更改方面**：[`src/pi-pentest/experiments/`](../../src/pi-pentest/experiments)（新增 `zh-prompts.json`、`run-zh-bench.ts`）
 
 **类型**：B
 
@@ -81,8 +81,8 @@
 
 ### [2026-11-07] - W3 预算收束机制（SEC-BUDGET-01）
 
-**更改方面**：`src/pi-pentest/src/budget.ts`（新增）、`test/budget.test.ts`（新增）、
-`src/pi-pentest/src/index.ts`（接入）
+**更改方面**：[`src/pi-pentest/src/budget.ts`](../../src/pi-pentest/src/budget.ts)（新增）、`test/budget.test.ts`（新增）、
+[`src/pi-pentest/src/index.ts`](../../src/pi-pentest/src/index.ts)（接入）
 
 **类型**：B
 
@@ -96,7 +96,7 @@
 
 **验收结果**：
 - [x] 功能测试：`npm test` 206 项全绿（新增 41 项预算单测）
-- [x] 测试依据：`3验收文档.md` SEC-BUDGET-01 / SEC-STOP-01
+- [x] 测试依据：[`3验收文档.md`](../3验收文档.md) SEC-BUDGET-01 / SEC-STOP-01
 - [x] 测试方法：`cd src/pi-pentest && npm test`；容器内设 `PENTEST_MAX_TOKENS=6000` 实测
 - [x] 安全回归：收束拦截走同一 `tool_call` 漏斗，无旁路
 - [x] 诚实性检查：报告自动记录 `停止原因：budget_exceeded`
@@ -107,8 +107,8 @@
 
 ### [2026-11-08] - W3 证据收集器（evidence_collector）
 
-**更改方面**：`src/pi-pentest/src/evidence-collector.ts`（新增）、`test/evidence-collector.test.ts`（新增）、
-`src/pi-pentest/src/index.ts`（接入工具+命令）
+**更改方面**：[`src/pi-pentest/src/evidence-collector.ts`](../../src/pi-pentest/src/evidence-collector.ts)（新增）、`test/evidence-collector.test.ts`（新增）、
+[`src/pi-pentest/src/index.ts`](../../src/pi-pentest/src/index.ts)（接入工具+命令）
 
 **类型**：B
 
@@ -121,7 +121,7 @@
 
 **验收结果**：
 - [x] 功能测试：`npm test` 240 项全绿（新增 34 项证据收集器单测）
-- [x] 测试依据：`3验收文档.md` R5 ②（证据与复现步骤）+ 评价量表「证据链完整性」
+- [x] 测试依据：[`3验收文档.md`](../3验收文档.md) R5 ②（证据与复现步骤）+ 评价量表「证据链完整性」
 - [x] 测试方法：`cd src/pi-pentest && npm test`；容器内跑完整流程并解包校验
 - [x] 安全回归：不涉及授权/预算逻辑；证据包内容隔离按 runId
 - [x] 诚实性检查：实测 6/6 文件哈希一致，gaps 为空；报告中途生成时的 TRACE_DEGRADED 已如实记录
