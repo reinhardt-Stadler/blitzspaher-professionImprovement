@@ -11,19 +11,29 @@
 #     not that the target is unusable.
 #
 # Ports collide across Vulhub targets (most Java demos bind 8080). That is why
-# this tool starts ONE target at a time instead of all eight: `lab.sh <name> start`.
+# this tool starts ONE target at a time instead of the whole list: `lab.sh <name> start`.
 #
 # Run `bash deploy/labs/lab.sh list` to see which of these actually exist in
 # your vulhub checkout - the list is filtered against the filesystem, so it
 # stays honest if your vulhub version differs.
+#
+# Two traps, both verified against a real checkout on 2026-11-25:
+#   1. DIRECTORY NAME IS NOT THE IMAGE TAG. `fastjson/1.2.47-rce` ships
+#      `vulhub/fastjson:1.2.45`. Never infer the tag from the path, and never
+#      assume a directory exists because a tag does: `fastjson/1.2.45-rce`
+#      does not exist, `1.2.24-rce` / `1.2.47-rce` / `1.2.83-rce` do.
+#   2. WEIGHT VARIES A LOT. `unomi` pulls elasticsearch 7.9.3 (2GB+ RSS, slow
+#      start); `solr` and `ofbiz` are single containers but still heavier than
+#      the three Java demos. Verify picks in file order, so the light targets
+#      come first on purpose.
 
-fastjson-1.2.47  | fastjson/1.2.47-rce   | 8090 | CVE-2017-18349  | yes
-fastjson-1.2.45  | fastjson/1.2.45-rce   | 8090 | CVE-2017-18349  | yes
+fastjson-1.2.45  | fastjson/1.2.47-rce   | 8090 | CVE-2017-18349  | yes
+fastjson-1.2.24  | fastjson/1.2.24-rce   | 8090 | CVE-2017-18349  | yes
 shiro-1.2.4      | shiro/CVE-2016-4437   | 8080 | CVE-2016-4437   | yes
-struts2-s2-045   | struts2/S2-045        | 8080 | CVE-2017-5638   | yes
-struts2-s2-061   | struts2/S2-061        | 8080 | CVE-2020-17530  | no
+struts2-s2-045   | struts2/s2-045        | 8080 | CVE-2017-5638   | yes
+struts2-s2-061   | struts2/s2-061        | 8080 | CVE-2020-17530  | no
 spring-4shell    | spring/CVE-2022-22965 | 8080 | CVE-2022-22965  | no
 tomcat-put       | tomcat/CVE-2017-12615 | 8080 | CVE-2017-12615  | no
 solr-velocity    | solr/CVE-2019-17558   | 8983 | CVE-2019-17558  | no
-ofbiz-upload     | ofbiz/CVE-2020-1955   | 8443 | CVE-2020-1955   | no
+ofbiz-xmlrpc     | ofbiz/CVE-2020-9496   | 8443 | CVE-2020-9496   | no
 unomi-rce        | unomi/CVE-2020-13942  | 8181 | CVE-2020-13942  | no
